@@ -36,6 +36,8 @@ async function fetchSearch(request, page) {
 refs.searchForm.addEventListener('submit', onSearch);
 
 function onSearch(evt) {
+  refs.btnLoad.classList.add('load');
+  total = 0;
   evt.preventDefault();
   request = evt.target.elements.searchQuery.value;
   refs.galleryList.innerHTML = '';
@@ -52,41 +54,41 @@ function onSearch(evt) {
 }
 
 function eventsUse(request, page) {
-  fetchSearch(request, page).then(data => {
-    const events = data.hits;
-    createMarkupList(events);
-    refs.btnLoad.classList.remove('load');
-    total += data.hits.length;
+  fetchSearch(request, page)
+    .then(data => {
+      const events = data.hits;
+      createMarkupList(events);
+      refs.btnLoad.classList.remove('load');
+      total += data.hits.length;
 
-    console.log(total);
+      console.log(total);
 
-    console.log(data.totalHits);
-    console.log(events);
+      console.log(data.totalHits);
+      console.log(events);
 
-    if (data.total == 0) {
-      Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-      refs.galleryList.innerHTML = '';
-      refs.btnLoad.classList.add('load');
+      if (data.total == 0) {
+        Notiflix.Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+        refs.galleryList.innerHTML = '';
+        refs.btnLoad.classList.add('load');
 
-      return
-    }
-    if (total < Number(data.totalHits)) {
-      refs.btnLoad.classList.remove('load')
-    }
-     else  {
-      Notiflix.Notify.failure(
-        "We're sorry, but you've reached the end of search results."
-      );
-      refs.btnLoad.classList.add('load');
+        return;
+      }
+      if (total < Number(data.totalHits)) {
+        refs.btnLoad.classList.remove('load');
+      } else {
+        Notiflix.Notify.failure(
+          "We're sorry, but you've reached the end of search results."
+        );
+        refs.btnLoad.classList.add('load');
 
-      return
-    }
-  })
-  .catch(err => {
-            console.log(err);
-        })
+        return;
+      }
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }
 
 function createMarkupList(arr) {
